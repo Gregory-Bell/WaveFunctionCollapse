@@ -1,4 +1,10 @@
 # WaveFunctionCollapse
+
+## Now with docs
+I'm just taking notes on this fork in order to better understand everything. Eventually I'd like to make a Python port for fun, because I find Python a lot better for when you're just trying to understand an algorithm. It'll probably be obnoxiously slow, but such is the tradeoff `¯\_(ツ)_/¯`
+
+## Overview
+
 This program generates bitmaps that are locally similar to the input bitmap.
 
 <p align="center"><img alt="main collage" src="http://i.imgur.com/g1yGvL7.png"></p>
@@ -52,14 +58,14 @@ Note that the tiles have the same symmetry type as their assigned letters (or, i
 dihedral group D4 are isomorphic for tiles and their corresponding letters). With this system it's enough to enumerate pairs of adjacent tiles only up to symmetry, which makes lists of adjacencies for tilesets with many symmetrical tiles (even the summer tileset, despite drawings not being symmetrical the system considers such tiles to be symmetrical) several times shorter.
 
 <p align="center">
-	<img alt="knots" src="http://i.imgur.com/EnBkcVN.png">
-	<img alt="tiled rooms" src="http://i.imgur.com/BruxOx9.png">
-	<img alt="circuit 1" src="http://i.imgur.com/BYt7AR6.png">
-	<img alt="circuit 2" src="http://i.imgur.com/yYHbMx8.png">
-	<img alt="circles" src="http://i.imgur.com/Hrs0Ir8.png">
-	<img alt="castle" src="http://i.imgur.com/Nd2mQOC.png">
-	<img alt="summer 1" src="http://i.imgur.com/re8WBud.png">
-	<img alt="summer 2" src="http://i.imgur.com/OmUHk1t.png">
+  <img alt="knots" src="http://i.imgur.com/EnBkcVN.png">
+  <img alt="tiled rooms" src="http://i.imgur.com/BruxOx9.png">
+  <img alt="circuit 1" src="http://i.imgur.com/BYt7AR6.png">
+  <img alt="circuit 2" src="http://i.imgur.com/yYHbMx8.png">
+  <img alt="circles" src="http://i.imgur.com/Hrs0Ir8.png">
+  <img alt="castle" src="http://i.imgur.com/Nd2mQOC.png">
+  <img alt="summer 1" src="http://i.imgur.com/re8WBud.png">
+  <img alt="summer 2" src="http://i.imgur.com/OmUHk1t.png">
 </p>
 
 Note that the unrestrained knot tileset (with all 5 tiles being allowed) is not interesting for WFC, because you can't run into a situation where you can't place a tile. We call tilesets with this property "easy". For example, Wang tilesets are easy. Without special heuristics easy tilesets don't produce interesting global arrangements, because correlations of tiles in easy tilesets quickly fall off with a distance.
