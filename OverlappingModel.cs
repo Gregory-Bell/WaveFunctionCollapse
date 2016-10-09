@@ -27,6 +27,7 @@ class OverlappingModel : Model
 		FMY = height;
 		periodic = periodicOutput;
 
+		// Read in the base image and make a list of all the colors in it
 		var bitmap = new Bitmap($"samples/{name}.png");
 		int SMX = bitmap.Width, SMY = bitmap.Height;
 		byte[,] sample = new byte[SMX, SMY];
@@ -47,9 +48,15 @@ class OverlappingModel : Model
 				sample[x, y] = (byte)i;
 			}
 
+		// Calculate of total possible combinations of colors for tile size
+		// ('tile' means the NxN pixel block)
 		int C = colors.Count;
 		long W = Stuff.Power(C, N * N);
 
+		// Function `pattern`
+		// Params: takes a function(int, int)
+		// Returns: a length N*N byte array
+		// Applies the function to each coord (x, y) in the NxN grid
 		Func<Func<int, int, byte>, byte[]> pattern = f =>
 		{
 			byte[] result = new byte[N * N];
@@ -57,10 +64,17 @@ class OverlappingModel : Model
 			return result;
 		};
 
+		// Function `patternFromSample`
+		// Returns: length N*N 1D byte array from 2D byte array `sample` whose
+		// top left corner is at the argument coords
 		Func<int, int, byte[]> patternFromSample = (x, y) => pattern((dx, dy) => sample[(x + dx) % SMX, (y + dy) % SMY]);
+		// Function that rotates an NxN byte array 90 degrees counterclockwise
 		Func<byte[], byte[]> rotate = p => pattern((x, y) => p[N - 1 - y + x * N]);
+		// Rotate an NxN byte array across the y-axis
 		Func<byte[], byte[]> reflect = p => pattern((x, y) => p[N - 1 - x + y * N]);
 
+		// Function `index`
+		// 
 		Func<byte[], long> index = p =>
 		{
 			long result = 0, power = 1;

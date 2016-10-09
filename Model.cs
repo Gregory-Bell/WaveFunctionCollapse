@@ -10,11 +10,19 @@ using System;
 
 abstract class Model
 {
+	// an array with the dimensions of the output. Each element of this array
+	// represents a state of an NxN region in the output. A state of an NxN
+	// region is a superpostion of NxN patterns of the input with boolean
+	// coefficients (so a state of a pixel in the output is a superposition of
+	// input colors with real coefficients). False coefficient means that the
+	// corresponding pattern is forbidden, true coefficient means that the
+	// corresponding pattern is not yet forbidden.
 	protected bool[][][] wave;
 	protected bool[][] changes;
 	protected double[] stationary;
 
 	protected Random random;
+	// width, height, number of weights, 
 	protected int FMX, FMY, T, limit;
 	protected bool periodic;
 
@@ -22,7 +30,9 @@ abstract class Model
 	double logT;
 
 	protected abstract bool Propagate();
-
+	
+	// Find a wave element with the minimal nonzero entropy. If there is no
+	// such elements (if all elements have zero or undefined entropy) then break
 	bool? Observe()
 	{
 		double min = 1E+3, sum, mainSum, logSum, noise, entropy;
