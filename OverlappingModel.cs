@@ -25,6 +25,9 @@ class OverlappingModel : Model
 		this.N = N;
 		FMX = width;
 		FMY = height;
+		// setting this to false will result in smaller contradiction rate
+		// https://github.com/mxgmn/WaveFunctionCollapse/issues/20#issuecomment-251570661
+		// TO-DO: why?
 		periodic = periodicOutput;
 
 		// Read in the base image and make a list of all the colors in it
@@ -110,7 +113,12 @@ class OverlappingModel : Model
 
 		Dictionary<long, int> weights = new Dictionary<long, int>();
 		List<long> ordering = new List<long>();
-
+		// I think this has to do with this section, but I'm not sure what
+		// it's doing.
+		// https://github.com/margaret/WaveFunctionCollapse#tilemap-generation
+		// Seems to run more often on non-periodic runs?
+		// Rotated/reflected pattern samples that show up more often will have
+		// higher weights?
 		for (int y = 0; y < (periodicInput ? SMY : SMY - N + 1); y++) for (int x = 0; x < (periodicInput ? SMX : SMX - N + 1); x++)
 			{
 				byte[][] ps = new byte[8][];
@@ -123,7 +131,7 @@ class OverlappingModel : Model
 				ps[5] = reflect(ps[4]);
 				ps[6] = rotate(ps[4]);
 				ps[7] = reflect(ps[6]);
-
+				// symmetry = 8 if not defined in xml for tile
 				for (int k = 0; k < symmetry; k++)
 				{
 					long ind = index(ps[k]);
@@ -140,7 +148,12 @@ class OverlappingModel : Model
 		this.ground = (ground + T) % T;
 
 		patterns = new byte[T][];
+		// a probability distribution that WFC reads from a sample or a tiles
+		// data file. It describes probabilities of each tile to be placed on
+		// the observation step.
 		stationary = new double[T];
+		// contains information about which tiles/patterns agree with each
+		// other when placed nearby.
 		propagator = new int[2 * N - 1][][][];
 
 		int counter = 0;
@@ -169,8 +182,20 @@ class OverlappingModel : Model
 
 		Func<byte[], byte[], int, int, bool> agrees = (p1, p2, dx, dy) =>
 		{
-			int xmin = dx < 0 ? 0 : dx, xmax = dx < 0 ? dx + N : N, ymin = dy < 0 ? 0 : dy, ymax = dy < 0 ? dy + N : N;
-			for (int y = ymin; y < ymax; y++) for (int x = xmin; x < xmax; x++) if (p1[x + N * y] != p2[x - dx + N * (y - dy)]) return false;
+			int xmin = dx < 0 ? 0 : dx;
+			int xmax = dx < 0 ? dx + N : N;
+			int ymin = dy < 0 ? 0 : dy;
+			int ymax = dy < 0 ? dy + N : N;
+			for (int y = ymin; y < ymax; y++)
+			{
+				for (int x = xmin; x < xmax; x++)
+				{
+					if (p1[x + N * y] != p2[x - dx + N * (y - dy)])
+					{
+						return false;
+					}
+				}
+			}
 			return true;
 		};
 
