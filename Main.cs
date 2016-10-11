@@ -20,12 +20,14 @@ static class Program
 		int counter = 1;
 		foreach (XmlNode xnode in xdoc.FirstChild.ChildNodes)
 		{
+			if (xnode.Name == "#comment") continue;
+
 			Model model;
 			string name = xnode.Get<string>("name");
 			Console.WriteLine($"< {name}");
 
 			if (xnode.Name == "overlapping") model = new OverlappingModel(name, xnode.Get("N", 2), xnode.Get("width", 48), xnode.Get("height", 48), 
-				xnode.Get("periodicInput", true), xnode.Get("periodic", false), xnode.Get("symmetry", 8), xnode.Get("foundation", 0));
+				xnode.Get("periodicInput", true), xnode.Get("periodic", false), xnode.Get("symmetry", 8), xnode.Get("ground", 0));
 			else if (xnode.Name == "simpletiled") model = new SimpleTiledModel(name, xnode.Get<string>("subset"), 
 				xnode.Get("width", 10), xnode.Get("height", 10), xnode.Get("periodic", false), xnode.Get("black", false));
 			else continue;
@@ -40,7 +42,7 @@ static class Program
 					if (finished)
 					{
 						Console.WriteLine("DONE");
-						model.Graphics().Save($"{counter} {name} {i}.bmp");
+						model.Graphics().Save($"{counter} {name} {i}.png");
 						break;
 					}
 					else Console.WriteLine("CONTRADICTION");
