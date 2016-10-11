@@ -151,6 +151,8 @@ class OverlappingModel : Model
 			counter++;
 		}
 
+		// Initialize the wave in the completely unobserved state, i.e. with
+		// all the boolean coefficients being true.
 		wave = new bool[FMX][][];
 		changes = new bool[FMX][];
 		for (int x = 0; x < FMX; x++)
@@ -191,6 +193,7 @@ class OverlappingModel : Model
 
 	protected override bool OnBoundary(int x, int y) => !periodic && (x + N > FMX || y + N > FMY);
 
+	// propagate information gained on the previous observation step.
 	override protected bool Propagate()
 	{
 		bool change = false, b;

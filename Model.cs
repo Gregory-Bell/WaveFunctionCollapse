@@ -29,10 +29,10 @@ abstract class Model
 	double[] logProb;
 	double logT;
 
+	// propagate information gained on the previous observation step.
 	protected abstract bool Propagate();
 	
-	// Find a wave element with the minimal nonzero entropy. If there is no
-	// such elements (if all elements have zero or undefined entropy) then break
+	// Find a wave element with the minimal nonzero entropy.
 	bool? Observe()
 	{
 		double min = 1E+3, sum, mainSum, logSum, noise, entropy;
@@ -50,7 +50,8 @@ abstract class Model
 						amount += 1;
 						sum += stationary[t];
 					}
-
+				// If there is no such elements (if all elements have zero or
+				// undefined entropy) then break
 				if (sum == 0) return false;
 
 				noise = 1E-6 * random.NextDouble();
@@ -80,7 +81,7 @@ abstract class Model
 		int r = distribution.Random(random.NextDouble());
 		for (int t = 0; t < T; t++) wave[argminx][argminy][t] = t == r;
 		changes[argminx][argminy] = true;
-
+		// ?? What does it mean if it reaches this point?
 		return null;
 	}
 
@@ -90,6 +91,8 @@ abstract class Model
 		logProb = new double[T];
 		for (int t = 0; t < T; t++) logProb[t] = Math.Log(stationary[t]);
 
+		// Reset all the possibilities to true, in case we are trying again
+		// after a run that ended in a contradiction
 		Clear();
 
 		random = new Random(seed);
@@ -97,6 +100,11 @@ abstract class Model
 		for (int l = 0; l < limit || limit == 0; l++)
 		{
 			bool? result = Observe();
+			// By now all the wave elements are either in a completely observed
+			// state (all the coefficients except one being zero) or in the
+			// contradictive state (all the coefficients being zero). In the
+			// first case return the output. In the second case finish the
+			// work without returning anything.
 			if (result != null) return (bool)result;
 			while (Propagate());
 		}
